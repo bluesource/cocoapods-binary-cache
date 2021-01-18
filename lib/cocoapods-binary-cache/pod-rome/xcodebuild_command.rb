@@ -62,6 +62,7 @@ module PodPrebuild
       args_[:device] ||= []
       args_[:default].prepend("BITCODE_GENERATION_MODE=bitcode") if bitcode_enabled?
       args_[:default].prepend("DEBUG_INFORMATION_FORMAT=dwarf") if disable_dsym?
+      args_[:default].prepend("BUILD_LIBRARY_FOR_DISTRIBUTION=YES") if PodPrebuild.config.xcframework?
       args_[:simulator].prepend("ONLY_ACTIVE_ARCH=NO") if simulator == "iphonesimulator"
       args_[:simulator] += args_[:default]
       args_[:device].prepend("ONLY_ACTIVE_ARCH=NO")
@@ -88,7 +89,7 @@ module PodPrebuild
       output = "#{output_path(target)}/#{target.product_module_name}.xcframework"
       FileUtils.rm_rf(output)
 
-      cmd = ["xcodebuild", " -create-xcframework", "-allow-internal-distribution"]
+      cmd = ["xcodebuild", " -create-xcframework"]
       cmd += sdks.map { |sdk| "-framework #{framework_path_of(target, sdk)}" }
       cmd << "-output" << output
       `#{cmd.join(" ")}`
