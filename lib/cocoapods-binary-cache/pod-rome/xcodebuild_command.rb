@@ -83,6 +83,7 @@ module PodPrebuild
         configuration: configuration,
         sdk: sdk,
         deployment_target: targets.map { |t| t.platform.deployment_target }.max.to_s,
+        log_path: log_path(sdk),
         args: sdk == simulator ? @build_args[:simulator] : @build_args[:device]
       )
     end
@@ -252,6 +253,10 @@ module PodPrebuild
 
     def disable_dsym?
       @options[:disable_dsym]
+    end
+
+    def log_path(sdk)
+      @options[:log_path].nil? ? nil : "#{@options[:log_path]}_#{sdk}"
     end
   end
 end
